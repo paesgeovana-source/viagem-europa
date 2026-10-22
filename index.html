@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viagem Europa 2027 · Roteiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF1F5; --surface:#FFFFFF; --sunk:#F5F7FA; --ink:#14213D; --muted:#5A6782; --line:#D5DCE6;
+  --route:#1F4FD8; --route-soft:#DCE5FB;
+  --ok:#1E7A55; --ok-soft:#DDF1E7; --warn:#9A6414; --warn-soft:#FBEED6; --todo:#B4362C; --todo-soft:#F8E1DE;
+  --head:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1626; --surface:#182134; --sunk:#131B2C; --ink:#E8EDF5; --muted:#9AA6BD; --line:#2A3550;
+    --route:#7C9BFF; --route-soft:#23305A;
+    --ok:#4CC38A; --ok-soft:#173A2C; --warn:#E3A945; --warn-soft:#3A2E16; --todo:#F0776B; --todo-soft:#3E1F1E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1626; --surface:#182134; --sunk:#131B2C; --ink:#E8EDF5; --muted:#9AA6BD; --line:#2A3550;
+  --route:#7C9BFF; --route-soft:#23305A;
+  --ok:#4CC38A; --ok-soft:#173A2C; --warn:#E3A945; --warn-soft:#3A2E16; --todo:#F0776B; --todo-soft:#3E1F1E;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--route);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+
+/* Topo */
+.top{background:var(--surface);border-bottom:1px solid var(--line);padding:22px 0 18px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.crew{margin:0;color:var(--muted);font-size:.95rem}
+.me{display:flex;align-items:center;gap:8px;font-size:.95rem;color:var(--muted)}
+.me select{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:6px 10px;color:var(--ink)}
+h1{font-size:clamp(2rem,5.5vw,3.4rem);font-weight:700;letter-spacing:-.02em;margin-top:14px}
+.dates{margin:6px 0 0;font-size:1.05rem}
+.dates b{color:var(--route)}
+
+/* Rota */
+.route{display:flex;align-items:flex-start;margin:26px 0 8px;overflow-x:auto;padding-bottom:6px}
+.stop{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:none;border:0;padding:4px 6px 4px 0;text-align:left;min-width:92px;border-radius:10px}
+.stop .dot{width:18px;height:18px;border-radius:50%;border:4px solid var(--route);background:var(--surface);margin-bottom:8px}
+.stop.done .dot{background:var(--route)}
+.stop .city{font-family:var(--head);font-weight:700;font-size:1.15rem}
+.stop .when{font-size:.85rem;color:var(--muted)}
+.stop .count{font-size:.85rem;font-weight:700;color:var(--todo)}
+.stop.done .count{color:var(--ok)}
+.stop[aria-pressed="true"] .city{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px;text-decoration-color:var(--route)}
+.leg{flex:1 1 60px;min-width:44px;position:relative;height:18px;margin-top:4px}
+.leg::before{content:"";position:absolute;left:-2px;right:6px;top:7px;height:4px;background:var(--route);border-radius:2px}
+.leg.night::before{background:repeating-linear-gradient(90deg,var(--route) 0 10px,transparent 10px 16px)}
+.leg span{position:absolute;top:20px;left:0;right:6px;text-align:center;font-size:.75rem;color:var(--muted);white-space:nowrap}
+.progress{display:flex;align-items:center;gap:14px;margin-top:22px}
+.bar{flex:1;height:10px;background:var(--route-soft);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);border-radius:999px;transition:width .4s ease}
+.progress span{font-size:.95rem;white-space:nowrap}
+
+/* Abas */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+.tab{border:0;background:none;padding:14px 14px 12px;font-family:var(--head);font-weight:600;font-size:1rem;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--route)}
+.tab small{font-family:var(--body);font-weight:700;font-size:.8rem;background:var(--todo-soft);color:var(--todo);border-radius:999px;padding:1px 7px;margin-left:6px}
+
+main{padding:22px 0 60px}
+.notice{margin:16px auto 0;max-width:1000px;border-radius:12px;padding:12px 16px;background:var(--warn-soft);color:var(--ink);border:1px solid var(--line)}
+.notice p{margin:0}
+.notice .who{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.bar-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--route);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--todo);border:1px solid var(--todo)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* Tarefas */
+.group{margin-bottom:28px}
+.group h2{font-size:1.25rem;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
+.group h2 span{font-family:var(--body);font-weight:400;font-size:.9rem;color:var(--muted)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;padding:14px 16px;border-top:1px solid var(--line);align-items:start}
+.item:first-child{border-top:0}
+.item .t{font-weight:700;margin:0}
+.item.is-resolvido .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.item .meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;color:var(--muted);margin-top:2px}
+.item .meta b{color:var(--ink);font-weight:700}
+.item .desc{font-size:.92rem;color:var(--muted);margin:6px 0 0;max-width:68ch}
+.item .notes{font-size:.92rem;margin:6px 0 0;padding:6px 10px;background:var(--sunk);border-radius:8px;max-width:68ch;white-space:pre-wrap}
+.status{border:0;border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:700;white-space:nowrap;margin-top:1px}
+.s-falta{background:var(--todo-soft);color:var(--todo)}
+.s-andamento{background:var(--warn-soft);color:var(--warn)}
+.s-resolvido{background:var(--ok-soft);color:var(--ok)}
+.edit{border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 10px;font-size:.85rem;color:var(--muted)}
+.empty{padding:28px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px}
+
+/* Antes de viajar */
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{padding:12px 10px;border-top:1px solid var(--line);text-align:center;vertical-align:middle}
+thead th{border-top:0;font-family:var(--head);font-weight:600;font-size:.95rem}
+th.req,td.req{text-align:left;padding-left:16px;min-width:240px}
+td.req b{display:block}
+td.req small{color:var(--muted);font-size:.85rem;display:block;max-width:46ch}
+td.req .edit{margin-top:6px}
+.tick{width:36px;height:36px;border-radius:10px;border:2px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;font-size:1.1rem;font-weight:700;color:transparent}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+tfoot td{font-size:.88rem;color:var(--muted);font-weight:700}
+
+/* Pagamentos */
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:26px}
+.person{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.person h3{font-size:1.15rem;margin-bottom:8px}
+.person dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.9rem}
+.person dt{color:var(--muted)}
+.person dd{margin:0;text-align:right;font-weight:700}
+.person dd.due{color:var(--todo)}
+.person dd.rec{color:var(--ok)}
+.exp .head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.exp .amt{font-family:var(--head);font-weight:700;font-size:1.1rem}
+.shares{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.share{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.88rem}
+.share[aria-pressed="true"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.share.payer{border-style:dashed}
+.exp-item{grid-template-columns:1fr auto}
+
+/* Histórico */
+.day{font-family:var(--head);font-weight:600;font-size:1.05rem;margin:22px 0 8px}
+.day:first-child{margin-top:0}
+.log{display:grid;grid-template-columns:52px 1fr;gap:4px 12px;padding:10px 16px;border-top:1px solid var(--line);font-size:.95rem}
+.log:first-child{border-top:0}
+.log time{color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(10,16,30,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);color:var(--ink);border-radius:16px;width:100%;max-width:560px;max-height:calc(100% - env(safe-area-inset-top,0px) - 20px);overflow:auto;padding:20px}
+@media (min-width:640px){.modal{align-items:center}}
+.sheet h2{font-size:1.35rem;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;font-size:.92rem;color:var(--muted)}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:9px 10px;color:var(--ink);font-size:1rem}
+.field textarea{min-height:72px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checks{display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--ink)}
+.checks label{display:flex;gap:6px;align-items:center}
+.sheet .actions{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:8px}
+.sheet .actions div{display:flex;gap:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:30;font-size:.95rem;max-width:90vw}
+.toast[hidden]{display:none}
+
+@media (max-width:560px){
+  .wrap{padding:0 14px}
+  .leg span{display:none}
+  .stop{min-width:74px}
+  .stop .city{font-size:1rem}
+  .row2{grid-template-columns:1fr}
+  .item{grid-template-columns:1fr auto;padding:12px 14px}
+  .item .status{grid-column:1;justify-self:start;order:-1}
+  .item .edit{grid-row:1;grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.needs-write,.me,.progress,#banner,[data-tab="money"],[data-tab="log"],#v-money,#v-log{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="toprow">
+      <p class="crew">Luan, Geovana, Ana, João e Joelma</p>
+      <label class="me">Você é <select id="me" aria-label="Seu nome"></select></label>
+    </div>
+    <h1>Barcelona a Madri</h1>
+    <p class="dates">19 de fevereiro a 5 de março de 2027 <span id="countdown"></span></p>
+    <nav class="route" id="route" aria-label="Filtrar por trecho"></nav>
+    <div class="progress"><div class="bar" aria-hidden="true"><i id="pbar"></i></div><span id="ptext">Carregando…</span></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Seções">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" data-tab="tasks" aria-selected="true">O que falta<small id="c-tasks" hidden></small></button>
+    <button class="tab" role="tab" data-tab="prep" aria-selected="false">Antes de viajar<small id="c-prep" hidden></small></button>
+    <button class="tab" role="tab" data-tab="money" aria-selected="false">Quem pagou</button>
+    <button class="tab" role="tab" data-tab="log" aria-selected="false">Histórico</button>
+  </div>
+</nav>
+
+<div class="wrap"><div id="banner"></div></div>
+
+<main class="wrap">
+  <section id="v-tasks">
+    <div class="bar-actions">
+      <div class="chips" id="filters">
+        <button class="chip" data-f="open" aria-pressed="true">Falta resolver</button>
+        <button class="chip" data-f="andamento" aria-pressed="false">Em andamento</button>
+        <button class="chip" data-f="resolvido" aria-pressed="false">Resolvidos</button>
+        <button class="chip" data-f="all" aria-pressed="false">Tudo</button>
+      </div>
+      <button class="btn needs-write" id="add-task">Adicionar item</button>
+    </div>
+    <div id="tasks"></div>
+  </section>
+
+  <section id="v-prep" hidden>
+    <div class="bar-actions">
+      <p style="margin:0;color:var(--muted);max-width:60ch">Toque no quadrado de cada pessoa quando ela tiver resolvido o item.</p>
+      <button class="btn needs-write" id="add-prep">Adicionar item</button>
+    </div>
+    <div id="prep"></div>
+  </section>
+
+  <section id="v-money" hidden>
+    <div id="people" class="people"></div>
+    <div class="bar-actions">
+      <h2 style="font-size:1.25rem">Despesas</h2>
+      <button class="btn needs-write" id="add-exp">Lançar despesa</button>
+    </div>
+    <div id="expenses"></div>
+  </section>
+
+  <section id="v-log" hidden>
+    <div id="log"></div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <form id="mform" novalidate></form>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+const PEOPLE = ["Luan","Geovana","Ana","João","Joelma"];
+const LEGS = [
+  {id:"bcn", city:"Barcelona", when:"19–21/02"},
+  {id:"pir", city:"Pirineus", when:"21–23/02"},
+  {id:"par", city:"Paris", when:"24/02–02/03"},
+  {id:"mad", city:"Madri", when:"02–05/03"}
+];
+const LEG_LINKS = [{t:"trem R3"},{t:"trem noturno",night:true},{t:"voo"}];
+const LEG_NAMES = {bcn:"Barcelona",pir:"Pirineus e Andorra",par:"Paris",mad:"Madri",geral:"Viagem toda"};
+const CATS = [
+  ["passagem","Passagens"],["deslocamento","Deslocamentos"],["hospedagem","Hospedagem"],
+  ["ingresso","Ingressos e reservas"],["outro","Outros"]
+];
+const STATUS = {falta:"Falta resolver", andamento:"Em andamento", resolvido:"Resolvido"};
+const NEXT = {falta:"andamento", andamento:"resolvido", resolvido:"falta"};
+
+const S = {db:null, user:null, canWrite:true, ready:{tasks:false,prep:false,exp:false},
+  tasks:[], prep:[], expenses:[], log:[], filter:"open", leg:null, tab:"tasks",
+  me:(()=>{try{return localStorage.getItem("viagem-me")||""}catch(e){return ""}})()};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const now = () => new Date().toISOString();
+const fmtMoney = (v,cur) => (cur==="BRL"?"R$ ":"€ ") + Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtSums = o => { const p=[]; if (Math.abs(o.EUR||0)>0.004) p.push(fmtMoney(o.EUR,"EUR")); if (Math.abs(o.BRL||0)>0.004) p.push(fmtMoney(o.BRL,"BRL")); return p.length?p.join(" + "):"—"; };
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,3200); }
+
+/* ---------- identidade ---------- */
+function renderMe(){
+  const sel=$("#me");
+  sel.innerHTML = `<option value="">escolha</option>` + PEOPLE.map(p=>`<option ${p===S.me?"selected":""}>${esc(p)}</option>`).join("");
+}
+function setMe(v){ S.me=v; try{localStorage.setItem("viagem-me",v)}catch(e){} renderMe(); renderBanner(); }
+$("#me").addEventListener("change", e=>setMe(e.target.value));
+
+function renderBanner(){
+  const b=$("#banner");
+  if (!S.db){
+    b.innerHTML = S.dbChecked ? `<div class="notice"><p>Os dados da viagem não carregaram nesta visualização. Abra o link estando conectado à sua conta Claude para ver e editar.</p></div>` : "";
+    return;
+  }
+  if (!S.canWrite){
+    b.innerHTML = `<div class="notice"><p>Você está vendo em modo leitura. Para marcar itens e lançar pagamentos, peça a quem criou a página para te convidar por e-mail como editor.</p></div>`;
+    return;
+  }
+  if (!S.me){
+    b.innerHTML = `<div class="notice"><p>Quem é você? Assim o histórico registra quem mudou cada coisa.</p><div class="who">${PEOPLE.map(p=>`<button class="chip" data-me="${esc(p)}">${esc(p)}</button>`).join("")}</div></div>`;
+    b.querySelectorAll("[data-me]").forEach(x=>x.onclick=()=>setMe(x.dataset.me));
+    return;
+  }
+  b.innerHTML="";
+}
+
+/* ---------- escrita ---------- */
+async function write(fn){
+  if (!S.db){ toast("Sem conexão com os dados."); return false; }
+  if (!S.canWrite){ toast("Você está em modo leitura."); return false; }
+  try { await fn(); return true; }
+  catch(e){
+    if (e && e.code==="invalid_argument" && S.writeUnknown){ S.canWrite=false; applyWriteState(); }
+    else if (e && e.code==="quota_exceeded") toast("O espaço de dados está cheio. Apague despesas ou itens antigos.");
+    else toast("Não foi possível salvar. Tente de novo.");
+    return false;
+  }
+}
+async function log(text){
+  if (!S.db || !S.canWrite) return;
+  try { await S.db.collection("log").add({at:now(), who:S.me||"Alguém", text}); } catch(e){}
+}
+function applyWriteState(){
+  document.querySelectorAll(".needs-write").forEach(b=>b.disabled=!S.canWrite||!S.db);
+  renderBanner(); render();
+}
+
+/* ---------- topo ---------- */
+function renderTop(){
+  const start=new Date(2027,1,19), end=new Date(2027,2,5), today=new Date(); today.setHours(0,0,0,0);
+  const d=Math.round((start-today)/864e5);
+  $("#countdown").innerHTML = d>1?`<b>faltam ${d} dias</b>`: d===1?`<b>é amanhã</b>`: today<=end?`<b>boa viagem!</b>`:"";
+  const open = t => (t.status||"falta")!=="resolvido";
+  const parts=[];
+  LEGS.forEach((l,i)=>{
+    const n=S.tasks.filter(t=>t.leg===l.id && open(t)).length;
+    const tot=S.tasks.filter(t=>t.leg===l.id).length;
+    parts.push(`<button class="stop ${tot&&!n?"done":""}" data-leg="${l.id}" aria-pressed="${S.leg===l.id}">
+      <span class="dot"></span><span class="city">${l.city}</span><span class="when">${l.when}</span>
+      <span class="count">${tot? (n? n+(n>1?" pendentes":" pendente") : "tudo certo") : ""}</span></button>`);
+    if (i<LEG_LINKS.length) parts.push(`<div class="leg ${LEG_LINKS[i].night?"night":""}" aria-hidden="true"><span>${LEG_LINKS[i].t}</span></div>`);
+  });
+  $("#route").innerHTML=parts.join("");
+  $("#route").querySelectorAll("[data-leg]").forEach(b=>b.onclick=()=>{ S.leg = S.leg===b.dataset.leg?null:b.dataset.leg; showTab("tasks"); render(); });
+
+  const all=S.tasks.length + S.prep.length*PEOPLE.length;
+  const done=S.tasks.filter(t=>t.status==="resolvido").length + S.prep.reduce((a,p)=>a+PEOPLE.filter(x=>p.done&&p.done[x]).length,0);
+  $("#pbar").style.width = all? (done/all*100)+"%":"0";
+  $("#ptext").textContent = all? `${done} de ${all} resolvidos` : (S.db?"Nada cadastrado ainda":"");
+  const ot=S.tasks.filter(open).length, c1=$("#c-tasks"); c1.hidden=!ot; c1.textContent=ot;
+  const op=S.prep.reduce((a,p)=>a+PEOPLE.filter(x=>!(p.done&&p.done[x])).length,0), c2=$("#c-prep"); c2.hidden=!op; c2.textContent=op;
+}
+
+/* ---------- tarefas ---------- */
+function renderTasks(){
+  const box=$("#tasks");
+  if (!S.ready.tasks){ box.innerHTML = S.db?`<div class="empty">Carregando…</div>`:""; return; }
+  let list=S.tasks.slice();
+  if (S.leg) list=list.filter(t=>t.leg===S.leg);
+  const st=t=>t.status||"falta";
+  if (S.filter==="open") list=list.filter(t=>st(t)!=="resolvido");
+  else if (S.filter!=="all") list=list.filter(t=>st(t)===S.filter);
+  list.sort((a,b)=>(a.order||0)-(b.order||0));
+  const legNote = S.leg?`<p style="margin:-6px 0 16px;color:var(--muted)">Mostrando só ${esc(LEG_NAMES[S.leg])}. <button class="edit" id="clear-leg">Ver todos os trechos</button></p>`:"";
+  if (!list.length){
+    const canSeed = !S.tasks.length && !S.prep.length && S.canWrite && S.db;
+    box.innerHTML = legNote + `<div class="empty">${S.tasks.length? (S.filter==="open"?"Tudo resolvido por aqui.":"Nenhum item com esse filtro.") : canSeed ? `<p style="margin:0 0 12px">A lista está vazia. Carregue os deslocamentos, hospedagens, ingressos e a checklist de documentos do roteiro econômico.</p><button class="btn" id="seed">Carregar itens do roteiro</button>` : "Nenhum item ainda. Use Adicionar item para começar."}</div>`;
+    const sd=$("#seed"); if (sd) sd.onclick=importSeed;
+  } else {
+    box.innerHTML = legNote + CATS.map(([c,label])=>{
+      const items=list.filter(t=>(t.cat||"outro")===c);
+      if (!items.length) return "";
+      return `<div class="group"><h2>${label}<span>${items.length}</span></h2><div class="list">${items.map(itemHTML).join("")}</div></div>`;
+    }).join("");
+  }
+  const cl=$("#clear-leg"); if (cl) cl.onclick=()=>{S.leg=null;render();};
+  box.querySelectorAll("[data-cycle]").forEach(b=>b.onclick=()=>cycleTask(b.dataset.cycle));
+  box.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openTask(b.dataset.edit));
+}
+function itemHTML(t){
+  const s=t.status||"falta";
+  const meta=[];
+  meta.push(`<span>${esc(LEG_NAMES[t.leg]||"Viagem toda")}</span>`);
+  if (t.due) meta.push(`<span>Quando: <b>${esc(t.due)}</b></span>`);
+  if (t.cost) meta.push(`<span>Custo: <b>${esc(t.cost)}</b></span>`);
+  if (t.resp) meta.push(`<span>Com: <b>${esc(t.resp)}</b></span>`);
+  return `<div class="item is-${s}">
+    <button class="status s-${s}" data-cycle="${esc(t._id)}" ${S.canWrite&&S.db?"":"disabled"} title="Mudar para ${STATUS[NEXT[s]]}">${STATUS[s]}</button>
+    <div><p class="t">${esc(t.title)}</p><div class="meta">${meta.join("")}</div>
+      ${t.desc?`<p class="desc">${esc(t.desc)}</p>`:""}
+      ${t.notes?`<p class="notes">${esc(t.notes)}</p>`:""}
+    </div>
+    <button class="edit" data-edit="${esc(t._id)}">${S.canWrite&&S.db?"Editar":"Ver"}</button>
+  </div>`;
+}
+async function cycleTask(id){
+  const t=S.tasks.find(x=>x._id===id); if(!t) return;
+  const next=NEXT[t.status||"falta"];
+  if (await write(()=>S.db.doc("tasks/"+id).update({status:next, updatedAt:now(), updatedBy:S.me||"Alguém"})))
+    log(`${t.title}: ${STATUS[next].toLowerCase()}`);
+}
+document.querySelectorAll("#filters .chip").forEach(b=>b.onclick=()=>{ S.filter=b.dataset.f; document.querySelectorAll("#filters .chip").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderTasks(); });
+
+function opts(list,val){ return list.map(([v,l])=>`<option value="${esc(v)}" ${v===val?"selected":""}>${esc(l)}</option>`).join(""); }
+function openTask(id){
+  const t = id ? S.tasks.find(x=>x._id===id) : {status:"falta", leg:S.leg||"geral", cat:"outro"};
+  if (!t) return;
+  const ro = !(S.canWrite&&S.db);
+  openModal(`
+    <h2 id="m-title">${id?(ro?"Detalhes":"Editar item"):"Novo item"}</h2>
+    <label class="field">O que é<input name="title" required value="${esc(t.title)}" ${ro?"disabled":""}></label>
+    <div class="row2">
+      <label class="field">Trecho<select name="leg" ${ro?"disabled":""}>${opts(Object.entries(LEG_NAMES),t.leg)}</select></label>
+      <label class="field">Tipo<select name="cat" ${ro?"disabled":""}>${opts(CATS,t.cat)}</select></label>
+    </div>
+    <div class="row2">
+      <label class="field">Situação<select name="status" ${ro?"disabled":""}>${opts(Object.entries(STATUS),t.status||"falta")}</select></label>
+      <label class="field">Quem está cuidando<select name="resp" ${ro?"disabled":""}>${opts([["","Ninguém ainda"],...PEOPLE.map(p=>[p,p])],t.resp||"")}</select></label>
+    </div>
+    <div class="row2">
+      <label class="field">Quando resolver<input name="due" value="${esc(t.due)}" placeholder="ex.: até 15/12" ${ro?"disabled":""}></label>
+      <label class="field">Custo estimado ou pago<input name="cost" value="${esc(t.cost)}" placeholder="ex.: €30–70 por pessoa" ${ro?"disabled":""}></label>
+    </div>
+    <label class="field">Detalhes<textarea name="desc" ${ro?"disabled":""}>${esc(t.desc)}</textarea></label>
+    <label class="field">Anotações (código de reserva, link, horário)<textarea name="notes" ${ro?"disabled":""}>${esc(t.notes)}</textarea></label>
+    ${t.updatedBy?`<p style="font-size:.85rem;color:var(--muted);margin:0 0 10px">Última alteração por ${esc(t.updatedBy)} em ${new Date(t.updatedAt).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}</p>`:""}
+    <div class="actions">
+      <div>${id&&!ro?`<button type="button" class="btn danger" id="m-del">Excluir</button>`:""}${id&&!ro?`<button type="button" class="btn ghost" id="m-exp">Lançar despesa</button>`:""}</div>
+      <div><button type="button" class="btn ghost" id="m-cancel">${ro?"Fechar":"Cancelar"}</button>${ro?"":`<button class="btn">Salvar</button>`}</div>
+    </div>`,
+  async data=>{
+    if (!data.title.trim()){ toast("Dê um nome ao item."); return false; }
+    const body={title:data.title.trim(),leg:data.leg,cat:data.cat,status:data.status,resp:data.resp,due:data.due.trim(),cost:data.cost.trim(),desc:data.desc.trim(),notes:data.notes.trim(),updatedAt:now(),updatedBy:S.me||"Alguém"};
+    if (id){
+      const ok=await write(()=>S.db.doc("tasks/"+id).update(body));
+      if (ok){ const changed = t.status!==body.status ? `${body.title}: ${STATUS[body.status].toLowerCase()}` : `Editou ${body.title}`; log(changed); }
+      return ok;
+    }
+    body.order=Date.now();
+    const ok=await write(()=>S.db.doc("tasks/"+uid()).set(body));
+    if (ok) log(`Adicionou ${body.title}`);
+    return ok;
+  });
+  const del=$("#m-del"); if (del) del.onclick=async()=>{ if(!confirm(`Excluir “${t.title}”?`)) return; if (await write(()=>S.db.doc("tasks/"+id).delete())){ log(`Excluiu ${t.title}`); closeModal(); } };
+  const ex=$("#m-exp"); if (ex) ex.onclick=()=>{ closeModal(); openExpense(null,{title:t.title}); };
+}
+$("#add-task").onclick=()=>openTask(null);
+
+/* ---------- antes de viajar ---------- */
+function renderPrep(){
+  const box=$("#prep");
+  if (!S.ready.prep){ box.innerHTML = S.db?`<div class="empty">Carregando…</div>`:""; return; }
+  const list=S.prep.slice().sort((a,b)=>(a.order||0)-(b.order||0));
+  if (!list.length){ box.innerHTML=`<div class="empty">Nenhum item ainda. Use Adicionar item para começar.</div>`; return; }
+  const can=S.canWrite&&S.db;
+  box.innerHTML=`<div class="scroll"><table>
+    <thead><tr><th class="req" scope="col">Item</th>${PEOPLE.map(p=>`<th scope="col">${esc(p)}</th>`).join("")}</tr></thead>
+    <tbody>${list.map(r=>`<tr><td class="req"><b>${esc(r.title)}</b>${r.note?`<small>${esc(r.note)}</small>`:""}${can?`<button class="edit" data-pedit="${esc(r._id)}">Editar</button>`:""}</td>
+      ${PEOPLE.map(p=>{const on=!!(r.done&&r.done[p]);return `<td><button class="tick" data-pid="${esc(r._id)}" data-person="${esc(p)}" aria-pressed="${on}" aria-label="${esc(r.title)}, ${esc(p)}: ${on?"feito":"pendente"}" ${can?"":"disabled"}>✓</button></td>`}).join("")}</tr>`).join("")}</tbody>
+    <tfoot><tr><td class="req">Feitos</td>${PEOPLE.map(p=>`<td>${list.filter(r=>r.done&&r.done[p]).length}/${list.length}</td>`).join("")}</tr></tfoot>
+  </table></div>`;
+  box.querySelectorAll("[data-pid]").forEach(b=>b.onclick=()=>togglePrep(b.dataset.pid,b.dataset.person));
+  box.querySelectorAll("[data-pedit]").forEach(b=>b.onclick=()=>openPrep(b.dataset.pedit));
+}
+async function togglePrep(id,person){
+  const r=S.prep.find(x=>x._id===id); if(!r) return;
+  const on=!(r.done&&r.done[person]);
+  if (await write(()=>S.db.doc("prep/"+id).update({done:{[person]:on}})))
+    log(`${r.title}: ${on?"feito":"desmarcado"} para ${person}`);
+}
+function openPrep(id){
+  const r = id? S.prep.find(x=>x._id===id) : {};
+  if (!r) return;
+  openModal(`<h2 id="m-title">${id?"Editar item":"Novo item para levar ou providenciar"}</h2>
+    <label class="field">Item<input name="title" value="${esc(r.title)}" required></label>
+    <label class="field">Observação<textarea name="note">${esc(r.note)}</textarea></label>
+    <div class="actions"><div>${id?`<button type="button" class="btn danger" id="m-del">Excluir</button>`:""}</div>
+    <div><button type="button" class="btn ghost" id="m-cancel">Cancelar</button><button class="btn">Salvar</button></div></div>`,
+  async data=>{
+    if (!data.title.trim()){ toast("Dê um nome ao item."); return false; }
+    if (id){ const ok=await write(()=>S.db.doc("prep/"+id).update({title:data.title.trim(),note:data.note.trim()})); if(ok) log(`Editou ${data.title.trim()}`); return ok; }
+    const ok=await write(()=>S.db.doc("prep/"+uid()).set({title:data.title.trim(),note:data.note.trim(),done:{},order:Date.now()}));
+    if (ok) log(`Adicionou ${data.title.trim()} em Antes de viajar`); return ok;
+  });
+  const del=$("#m-del"); if (del) del.onclick=async()=>{ if(!confirm(`Excluir “${r.title}”?`)) return; if (await write(()=>S.db.doc("prep/"+id).delete())){ log(`Excluiu ${r.title}`); closeModal(); } };
+}
+$("#add-prep").onclick=()=>openPrep(null);
+
+/* ---------- pagamentos ---------- */
+function isPaid(e,p){ return e.payer===p || !!(e.paid&&e.paid[p]); }
+function renderMoney(){
+  const pbox=$("#people"), ebox=$("#expenses");
+  if (!S.ready.exp){ pbox.innerHTML=""; ebox.innerHTML = S.db?`<div class="empty">Carregando…</div>`:""; return; }
+  const sum = {}; PEOPLE.forEach(p=>sum[p]={share:{EUR:0,BRL:0},paid:{EUR:0,BRL:0},due:{EUR:0,BRL:0},rec:{EUR:0,BRL:0}});
+  const total={EUR:0,BRL:0};
+  S.expenses.forEach(e=>{
+    const ppl=(e.people||[]).filter(p=>PEOPLE.includes(p)); if(!ppl.length) return;
+    const cur=e.currency==="BRL"?"BRL":"EUR", share=(+e.amount||0)/ppl.length;
+    total[cur]+= +e.amount||0;
+    ppl.forEach(p=>{ sum[p].share[cur]+=share; if(isPaid(e,p)) sum[p].paid[cur]+=share; else { sum[p].due[cur]+=share; if(e.payer&&PEOPLE.includes(e.payer)) sum[e.payer].rec[cur]+=share; } });
+  });
+  pbox.innerHTML = PEOPLE.map(p=>{const s=sum[p]; const hasDue=(s.due.EUR+s.due.BRL)>0.004, hasRec=(s.rec.EUR+s.rec.BRL)>0.004;
+    return `<div class="person"><h3>${esc(p)}</h3><dl>
+      <dt>Parte dele(a)</dt><dd>${fmtSums(s.share)}</dd>
+      <dt>Já pagou</dt><dd>${fmtSums(s.paid)}</dd>
+      <dt>Falta pagar</dt><dd class="${hasDue?"due":""}">${fmtSums(s.due)}</dd>
+      ${hasRec?`<dt>A receber</dt><dd class="rec">${fmtSums(s.rec)}</dd>`:""}
+    </dl></div>`;}).join("");
+  const list=S.expenses.slice().sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  if (!list.length){ ebox.innerHTML=`<div class="empty">Nenhuma despesa lançada. Quando alguém pagar uma reserva ou passagem, lance aqui e marque quem já acertou a sua parte.</div>`; return; }
+  const can=S.canWrite&&S.db;
+  ebox.innerHTML=`<div class="list">${list.map(e=>{
+    const ppl=(e.people||[]).filter(p=>PEOPLE.includes(p)); const share=ppl.length?(+e.amount||0)/ppl.length:0;
+    const cur=e.currency==="BRL"?"BRL":"EUR"; const nPaid=ppl.filter(p=>isPaid(e,p)).length;
+    return `<div class="item exp-item exp"><div>
+      <div class="head"><p class="t">${esc(e.title)}</p><span class="amt">${fmtMoney(e.amount,cur)}</span></div>
+      <div class="meta"><span>${e.payer?`Adiantado por <b>${esc(e.payer)}</b>`:"Cada um paga a sua parte"}</span><span><b>${fmtMoney(share,cur)}</b> por pessoa</span><span>${nPaid} de ${ppl.length} acertaram</span></div>
+      ${e.notes?`<p class="notes">${esc(e.notes)}</p>`:""}
+      <div class="shares">${ppl.map(p=>{const on=isPaid(e,p), payer=e.payer===p;
+        return `<button class="share ${payer?"payer":""}" data-eid="${esc(e._id)}" data-person="${esc(p)}" aria-pressed="${on}" ${payer||!can?"disabled":""} title="${payer?"Adiantou o valor":on?"Marcar como não pago":"Marcar como pago"}">${esc(p)} ${payer?"adiantou":on?"pagou":"deve"}</button>`}).join("")}</div>
+    </div><button class="edit" data-eedit="${esc(e._id)}">${can?"Editar":"Ver"}</button></div>`;}).join("")}</div>`;
+  ebox.querySelectorAll("[data-eid]").forEach(b=>b.onclick=()=>toggleShare(b.dataset.eid,b.dataset.person));
+  ebox.querySelectorAll("[data-eedit]").forEach(b=>b.onclick=()=>openExpense(b.dataset.eedit));
+}
+async function toggleShare(id,person){
+  const e=S.expenses.find(x=>x._id===id); if(!e) return;
+  const on=!(e.paid&&e.paid[person]);
+  if (await write(()=>S.db.doc("expenses/"+id).update({paid:{[person]:on}})))
+    log(`${person} ${on?"pagou":"ainda não pagou"} a parte de ${e.title}`);
+}
+function openExpense(id,preset){
+  const e = id? S.expenses.find(x=>x._id===id) : Object.assign({currency:"EUR",people:PEOPLE.slice(),payer:""},preset||{});
+  if (!e) return;
+  const ro=!(S.canWrite&&S.db), dis=ro?"disabled":"";
+  openModal(`<h2 id="m-title">${id?(ro?"Despesa":"Editar despesa"):"Lançar despesa"}</h2>
+    <label class="field">O que foi pago<input name="title" value="${esc(e.title)}" placeholder="ex.: Hospedagem em Paris" ${dis}></label>
+    <div class="row2">
+      <label class="field">Valor total<input name="amount" inputmode="decimal" value="${e.amount!=null?String(e.amount).replace(".",","):""}" placeholder="0,00" ${dis}></label>
+      <label class="field">Moeda<select name="currency" ${dis}>${opts([["EUR","Euro (€)"],["BRL","Real (R$)"]],e.currency)}</select></label>
+    </div>
+    <label class="field">Quem adiantou o valor<select name="payer" ${dis}>${opts([["","Ninguém, cada um paga a sua parte"],...PEOPLE.map(p=>[p,p])],e.payer||"")}</select></label>
+    <div class="field">Dividir entre<div class="checks">${PEOPLE.map(p=>`<label><input type="checkbox" name="people" value="${esc(p)}" ${(e.people||[]).includes(p)?"checked":""} ${dis}> ${esc(p)}</label>`).join("")}</div></div>
+    <label class="field">Anotações<textarea name="notes" ${dis}>${esc(e.notes)}</textarea></label>
+    <div class="actions"><div>${id&&!ro?`<button type="button" class="btn danger" id="m-del">Excluir</button>`:""}</div>
+    <div><button type="button" class="btn ghost" id="m-cancel">${ro?"Fechar":"Cancelar"}</button>${ro?"":`<button class="btn">Salvar</button>`}</div></div>`,
+  async data=>{
+    const amount=parseFloat(String(data.amount).replace(/\./g,"").replace(",","."));
+    if (!data.title.trim()){ toast("Diga o que foi pago."); return false; }
+    if (!(amount>0)){ toast("Informe um valor maior que zero."); return false; }
+    if (!data.people.length){ toast("Escolha ao menos uma pessoa para dividir."); return false; }
+    const body={title:data.title.trim(),amount,currency:data.currency,payer:data.payer,people:data.people,notes:data.notes.trim(),updatedAt:now()};
+    if (id){ const ok=await write(()=>S.db.doc("expenses/"+id).update(body)); if(ok) log(`Editou a despesa ${body.title} (${fmtMoney(amount,body.currency)})`); return ok; }
+    body.paid={}; body.createdAt=now(); body.createdBy=S.me||"Alguém";
+    const ok=await write(()=>S.db.doc("expenses/"+uid()).set(body));
+    if (ok) log(`Lançou ${body.title}: ${fmtMoney(amount,body.currency)}${body.payer?`, adiantado por ${body.payer}`:""}`);
+    return ok;
+  });
+  const del=$("#m-del"); if (del) del.onclick=async()=>{ if(!confirm(`Excluir a despesa “${e.title}”?`)) return; if (await write(()=>S.db.doc("expenses/"+id).delete())){ log(`Excluiu a despesa ${e.title}`); closeModal(); } };
+}
+$("#add-exp").onclick=()=>openExpense(null);
+
+/* ---------- histórico ---------- */
+function renderLog(){
+  const box=$("#log");
+  if (!S.db){ box.innerHTML=""; return; }
+  if (!S.log.length){ box.innerHTML=`<div class="empty">As mudanças feitas por qualquer pessoa aparecem aqui, com data e autor.</div>`; return; }
+  const days={};
+  S.log.forEach(l=>{ const d=new Date(l.at); const k=d.toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"}); (days[k]=days[k]||[]).push(l); });
+  box.innerHTML=Object.entries(days).map(([k,ls])=>`<h3 class="day">${esc(k.charAt(0).toUpperCase()+k.slice(1))}</h3><div class="list">${ls.map(l=>`<div class="log"><time>${new Date(l.at).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</time><div><b>${esc(l.who)}</b>: ${esc(l.text)}</div></div>`).join("")}</div>`).join("");
+}
+
+/* ---------- modal ---------- */
+let lastFocus=null;
+function openModal(html,onSave){
+  lastFocus=document.activeElement;
+  const f=$("#mform"); f.innerHTML=html; $("#modal").hidden=false;
+  const first=f.querySelector("input:not([disabled]),select:not([disabled]),textarea:not([disabled])") || f.querySelector("#m-cancel"); first&&first.focus();
+  $("#m-cancel").onclick=closeModal;
+  f.onsubmit=async ev=>{
+    ev.preventDefault();
+    const fd=new FormData(f), data={};
+    for (const [k,v] of fd.entries()){ if(k==="people"){(data.people=data.people||[]).push(v);} else data[k]=v; }
+    data.people=data.people||[];
+    ["title","due","cost","desc","notes","note","amount"].forEach(k=>{ if(data[k]==null) data[k]=""; });
+    const btn=f.querySelector("button.btn:not(.ghost):not(.danger)"); if(btn) btn.disabled=true;
+    const ok=await onSave(data);
+    if (btn) btn.disabled=false;
+    if (ok!==false) closeModal();
+  };
+}
+function closeModal(){ $("#modal").hidden=true; $("#mform").innerHTML=""; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+$("#modal").addEventListener("click",e=>{ if(e.target.id==="modal") closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("#modal").hidden) closeModal(); });
+
+
+/* ---------- itens do roteiro (importados uma vez, por clique) ---------- */
+const SEED_TASKS = [
+ ["passagem","geral","Voos Brasil → Barcelona (19/02) e Madri → Brasil (05/03)","Já","Trecho aberto (open-jaw): costuma custar quase o mesmo que ida e volta pela mesma cidade."],
+ ["passagem","par","Voo Paris → Madri (02/03, manhã)","2 a 3 meses antes","Voo direto de cerca de 2h. Compare no Google Flights e prefira Orly ou CDG a Beauvais. Tarifas baratas só incluem bolsa pequena: some bagagem se precisar.","€30–90"],
+ ["deslocamento","pir","Trem noturno Latour-de-Carol → Paris-Austerlitz (23/02)","Já (vendas abrem ~4 meses antes)","Intercités de Nuit, reserva obrigatória na SNCF Connect. Confirmar se há saída em 23/02 antes de fechar a hospedagem nos Pirineus. Plano B: Latour-de-Carol → Toulouse → Paris (€45–100).","€30–70 por pessoa"],
+ ["deslocamento","bcn","Trem Barcelona → Puigcerdá (21/02, R3)","Perto da data","Rodalies R3 saindo de Plaça Catalunya ou Sants, cerca de 2h30 a 3h. Conferir avisos de obras. Plano B: ônibus para La Seu d’Urgell (€20–35).","€10–14"],
+ ["deslocamento","pir","Ônibus Puigcerdá ↔ Andorra (22/02)","No dia","Via La Seu d’Urgell, cerca de 2h cada sentido. Frequência menor no inverno: conferir horários. Levar passaporte, Andorra não faz parte do Schengen.","€10–20 ida e volta"],
+ ["deslocamento","pir","Puigcerdá → Latour-de-Carol (23/02)","No dia","Trecho curto (3 a 5 km), de trem ou táxi, até a estação do trem noturno."],
+ ["deslocamento","geral","Transfers de aeroporto em Paris e Madri","Na viagem","Paris: metrô linha 14 até Orly ou RER B até CDG. Madri: metrô linha 8, com suplemento de aeroporto."],
+ ["hospedagem","bcn","Hospedagem em Barcelona (19 a 21/02, 2 noites)","Logo"],
+ ["hospedagem","pir","Hospedagem em Puigcerdá ou La Seu d’Urgell (21 a 23/02, 2 noites)","Depois de confirmar o trem noturno","Mais baratas que Andorra."],
+ ["hospedagem","par","Hospedagem em Paris (24/02 a 02/03, 6 noites)","Já","A Semana de Moda costuma cair no fim de fevereiro e encarece as diárias. Prefira Belleville, Ménilmontant ou Canal Saint-Martin."],
+ ["hospedagem","mad","Hospedagem em Madri (02 a 05/03, 3 noites)","Logo"],
+ ["ingresso","bcn","Sagrada Família (sáb 20/02, 9h)","Já","Site oficial, primeiro horário do dia.","€26–30"],
+ ["ingresso","bcn","Park Güell, zona monumental (sáb 20/02)","Com antecedência","Horário marcado.","~€10"],
+ ["ingresso","par","Notre-Dame por dentro (qua 24/02)","Perto da data","Gratuito, mas com horário reservado online."],
+ ["ingresso","par","Sainte-Chapelle (qua 24/02)","Com antecedência","","€13–16"],
+ ["ingresso","par","Louvre (qui 25/02)","Com antecedência","Horário marcado. Fecha às terças.","€22"],
+ ["ingresso","par","Arco do Triunfo, terraço (qui 25/02, pôr do sol)","Com antecedência","","~€16"],
+ ["ingresso","par","Torre Eiffel (sex 26/02, manhã)","Ingressos abrem ~60 dias antes","Escada até o 2º andar ~€11; elevador até o topo €30 ou mais.","~€11"],
+ ["ingresso","par","Musée d’Orsay (sex 26/02, tarde)","Com antecedência","Fecha às segundas.","~€16"],
+ ["ingresso","par","Versailles ou Provins (dom 28/02)","Decidir e reservar","Versailles fecha às segundas. Provins é a opção mais econômica.","~€21 + trem"],
+ ["outro","par","Decidir se o Paris Museum Pass compensa","Antes de comprar os ingressos de Paris","Só vale com 5 ou mais atrações pagas.","a partir de ~€70 (2 dias)"],
+ ["ingresso","mad","Palácio Real (qua 03/03)","Com antecedência","Há horários gratuitos para cidadãos da UE e ibero-americanos: confirmar se vale para brasileiros.","~€14"],
+ ["ingresso","mad","Reina Sofía, horário gratuito (qua 03/03, noite)","Perto da data","Gratuito à noite (cerca de 19h–21h). Fecha às terças."],
+ ["ingresso","mad","Prado, horário gratuito (qui 04/03, 18h–20h)","Perto da data","Gratuito nas últimas 2 horas do dia."]
+];
+const SEED_PREP = [
+ ["Passaporte válido","Válido por pelo menos 3 meses após 05/03/2027 (o ideal é 6 meses)."],
+ ["Seguro viagem","Exigido para o Espaço Schengen, com cobertura mínima de €30 mil. Leve a apólice impressa."],
+ ["ETIAS (autorização eletrônica)","Previsto para o fim de 2026, mas pode ser adiado para 2027. Conferir no site oficial da UE se estará em vigor em fevereiro."],
+ ["Comprovantes impressos","Passagem de volta, reservas de hospedagem e roteiro, para mostrar na imigração."],
+ ["Comprovante de meios financeiros","Extrato ou cartão de crédito internacional."],
+ ["Cartão internacional ou conta global","Avisar o banco da viagem e conferir o IOF."],
+ ["Chip ou eSIM com internet na Europa",""],
+ ["Vacinas em dia","Nenhuma vacina é obrigatória para Espanha, França ou Andorra; vale conferir o cartão de vacinação."],
+ ["Remédios de uso contínuo e receita","Leve na bagagem de mão, com a receita."],
+ ["Adaptador de tomada tipo C/F",""],
+ ["Roupa de inverno","Os Pirineus em fevereiro têm neve e temperaturas perto de 0 °C."]
+];
+async function importSeed(){
+  const btn=$("#seed"); if (btn) btn.disabled=true;
+  let ok=true, i=0;
+  for (const [cat,leg,title,due,desc,cost] of SEED_TASKS){
+    ok = await write(()=>S.db.doc("tasks/"+uid()).set({cat,leg,title,due:due||"",desc:desc||"",cost:cost||"",status:"falta",resp:"",notes:"",order:++i}));
+    if (!ok) break;
+  }
+  if (ok) for (const [title,note] of SEED_PREP){
+    ok = await write(()=>S.db.doc("prep/"+uid()).set({title,note,done:{},order:++i}));
+    if (!ok) break;
+  }
+  if (ok) log("Importou os itens do roteiro");
+  else if (btn) btn.disabled=false;
+}
+
+/* ---------- abas ---------- */
+const TABS=["tasks","prep","money","log"];
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  TABS.forEach(x=>$("#v-"+x).hidden = x!==t);
+  if (location.hash.slice(1)!==t){ try{history.replaceState(null,"","#"+t)}catch(e){} }
+}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+const h=location.hash.slice(1); if (TABS.includes(h)) showTab(h);
+
+function render(){ renderTop(); renderTasks(); renderPrep(); renderMoney(); renderLog(); }
+
+/* ---------- versão somente leitura ---------- */
+S.canWrite=false; S.db={}; S.dbChecked=true;
+let _o=0;
+S.tasks=SEED_TASKS.map(([cat,leg,title,due,desc,cost])=>({_id:"t"+(++_o),cat,leg,title,due:due||"",desc:desc||"",cost:cost||"",status:"falta",resp:"",notes:"",order:_o}));
+S.prep=SEED_PREP.map(([title,note])=>({_id:"p"+(++_o),title,note,done:{},order:_o}));
+S.expenses=[]; S.ready={tasks:true,prep:true,exp:true};
+S.filter="all";
+document.querySelectorAll("#filters .chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"));
+document.querySelectorAll("#filters .chip[data-f=andamento],#filters .chip[data-f=resolvido],#filters .chip[data-f=open]").forEach(x=>x.hidden=true);
+renderMe(); render();
+</script>
+</body>
+</html>
